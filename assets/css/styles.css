@@ -434,6 +434,17 @@ ul { margin: 0; padding: 0; list-style: none; }
 .f-social a:hover { background: var(--gold); transform: translateY(-2px); }
 .f-social svg { width: 18px; height: 18px; color: #fff; }
 .f-social a:hover svg { color: var(--navy-deep); }
+/* Redes com cor real da marca (mantêm a cor no hover) */
+.f-social a.f-social-ig,
+.f-social a.f-social-ig:hover { background: radial-gradient(circle at 28% 100%, #ffd76a 0%, #fa8f37 22%, #f5274f 42%, #c5279b 62%, #7d2ae8 88%); }
+.f-social a.f-social-li,
+.f-social a.f-social-li:hover { background: #0a66c2; }
+.f-social a.f-social-ig:hover,
+.f-social a.f-social-li:hover { transform: translateY(-2px); filter: brightness(1.08); }
+.f-social a.f-social-ig svg,
+.f-social a.f-social-li svg,
+.f-social a.f-social-ig:hover svg,
+.f-social a.f-social-li:hover svg { color: #fff; }
 .f-contact .fc { display: flex; gap: .6rem; align-items: flex-start; margin-bottom: .9rem; font-size: .92rem; }
 .f-contact .fc svg { width: 18px; height: 18px; color: var(--gold); flex: none; margin-top: 2px; }
 .f-contact .fc a { color: #aebccd; }
