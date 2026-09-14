@@ -326,20 +326,59 @@
     });
   }
 
-  /* ---------- Cookie banner ---------- */
-  var cookie = $("#cookieBanner");
-  var cookieAccept = $("#cookieAccept");
-  var cookieReject = $("#cookieReject");
+  /* ---------- LinkedIn Insight Tag (só após consentimento) ---------- */
+  var liLoaded = false;
+  function loadLinkedInInsight() {
+    if (liLoaded) return;
+    liLoaded = true;
+    window._linkedin_partner_id = "10882153";
+    window._linkedin_data_partner_ids = window._linkedin_data_partner_ids || [];
+    window._linkedin_data_partner_ids.push("10882153");
+    (function (l) {
+      if (!l) { window.lintrk = function (a, b) { window.lintrk.q.push([a, b]); }; window.lintrk.q = []; }
+      var s = document.getElementsByTagName("script")[0];
+      var b = document.createElement("script");
+      b.type = "text/javascript"; b.async = true;
+      b.src = "https://snap.licdn.com/li.lms-analytics/insight.min.js";
+      s.parentNode.insertBefore(b, s);
+    })(window.lintrk);
+  }
+
+  /* ---------- Cookie banner + consentimento (LGPD) ---------- */
   var COOKIE_KEY = "ao_cookie_consent";
+  var cookieConsent = null;
+  try { cookieConsent = localStorage.getItem(COOKIE_KEY); } catch (e) {}
+
+  // Já aceitou antes: carrega os rastreadores de imediato.
+  if (cookieConsent === "accepted") loadLinkedInInsight();
+
+  // Garante o banner em qualquer página (inclusive landing de anúncio) sem decisão.
+  var cookie = $("#cookieBanner");
+  if (!cookieConsent && !cookie) {
+    cookie = document.createElement("div");
+    cookie.className = "cookie";
+    cookie.id = "cookieBanner";
+    cookie.innerHTML =
+      '<p>Usamos cookies para melhorar sua experiência e analisar o tráfego do site. Ao continuar, você concorda com a nossa <a href="privacidade.html">Política de Privacidade</a>.</p>' +
+      '<div class="cookie__row">' +
+      '<button class="btn btn-gold" id="cookieAccept">Aceitar</button>' +
+      '<button class="btn btn-ghost" id="cookieReject">Recusar</button>' +
+      '</div>';
+    document.body.appendChild(cookie);
+  }
+
   function cookieDecision(val) {
     try { localStorage.setItem(COOKIE_KEY, val); } catch (e) {}
     if (cookie) cookie.classList.remove("show");
+    if (val === "accepted") loadLinkedInInsight();
   }
-  var hasConsent = false;
-  try { hasConsent = !!localStorage.getItem(COOKIE_KEY); } catch (e) {}
-  if (!hasConsent && cookie) setTimeout(function () { cookie.classList.add("show"); }, 1800);
-  if (cookieAccept) cookieAccept.addEventListener("click", function () { cookieDecision("accepted"); });
-  if (cookieReject) cookieReject.addEventListener("click", function () { cookieDecision("rejected"); });
+  if (!cookieConsent && cookie) {
+    setTimeout(function () { cookie.classList.add("show"); }, 1800);
+    var cAcc = cookie.querySelector("#cookieAccept");
+    var cRej = cookie.querySelector("#cookieReject");
+    if (cAcc) cAcc.addEventListener("click", function () { cookieDecision("accepted"); });
+    if (cRej) cRej.addEventListener("click", function () { cookieDecision("rejected"); });
+  }
 
   /* ---------- Reveal on scroll ---------- */
   if ("IntersectionObserver" in window) {
