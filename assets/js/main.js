@@ -344,13 +344,35 @@
     })(window.lintrk);
   }
 
+  /* ---------- Google Ads (gtag.js) — Consent Mode v2 ---------- */
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag("consent", "default", {
+    ad_storage: "denied", ad_user_data: "denied", ad_personalization: "denied",
+    analytics_storage: "denied", wait_for_update: 500
+  });
+  (function () {
+    var g = document.createElement("script");
+    g.async = true;
+    g.src = "https://www.googletagmanager.com/gtag/js?id=AW-18451711790";
+    document.head.appendChild(g);
+  })();
+  gtag("js", new Date());
+  gtag("config", "AW-18451711790");
+  function grantAdsConsent() {
+    gtag("consent", "update", {
+      ad_storage: "granted", ad_user_data: "granted",
+      ad_personalization: "granted", analytics_storage: "granted"
+    });
+  }
+
   /* ---------- Cookie banner + consentimento (LGPD) ---------- */
   var COOKIE_KEY = "ao_cookie_consent";
   var cookieConsent = null;
   try { cookieConsent = localStorage.getItem(COOKIE_KEY); } catch (e) {}
 
   // Já aceitou antes: carrega os rastreadores de imediato.
-  if (cookieConsent === "accepted") loadLinkedInInsight();
+  if (cookieConsent === "accepted") { loadLinkedInInsight(); grantAdsConsent(); }
 
   // Garante o banner em qualquer página (inclusive landing de anúncio) sem decisão.
   var cookie = $("#cookieBanner");
@@ -370,7 +392,7 @@
   function cookieDecision(val) {
     try { localStorage.setItem(COOKIE_KEY, val); } catch (e) {}
     if (cookie) cookie.classList.remove("show");
-    if (val === "accepted") loadLinkedInInsight();
+    if (val === "accepted") { loadLinkedInInsight(); grantAdsConsent(); }
   }
   if (!cookieConsent && cookie) {
     setTimeout(function () { cookie.classList.add("show"); }, 1800);
